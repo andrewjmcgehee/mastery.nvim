@@ -94,7 +94,7 @@ M.setup = function()
 			"you've achieved "
 				.. string.format("%.2f", hours)
 				.. " hours ("
-				.. string.format("%.2f", percent)
+				.. string.format("%.4f", percent)
 				.. "%) of mastery",
 			vim.log.levels.INFO,
 			{ title = "Mastery" }
