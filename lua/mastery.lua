@@ -50,13 +50,18 @@ M.create_or_read_global_state_file = function()
 end
 
 M.update_global_state_file = function(elapsed)
-	local state_fp = vim.fn.stdpath("data") .. "/mastery.state.new"
-	local state_file = io.open(state_fp, "w")
-	if not state_file then
-		vim.notify("failed to create mastery.state file", vim.log.levels.ERROR, { title = "Mastery" })
+	local new_state_fp = vim.fn.stdpath("data") .. "/mastery.state.new"
+	local new_state_file = io.open(new_state_fp, "w")
+	if not new_state_file then
+		vim.notify("failed to create mastery.state.new file", vim.log.levels.ERROR, { title = "Mastery" })
 		return
 	end
-	state_file:write(elapsed .. "\n")
+	new_state_file:write(elapsed)
+	new_state_file:close()
+	-- move new state file to overwrite old
+	local state_fp = vim.fn.stdpath("data") .. "/mastery.state"
+	os.remove(state_fp)
+	os.rename(new_state_fp, state_fp)
 end
 
 M.on_enter = function()
