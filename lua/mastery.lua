@@ -86,7 +86,12 @@ M.setup = function()
 		if not state then
 			return
 		end
-		vim.notify("you've achieved " .. state.elapsed .. "s of mastery", vim.log.levels.INFO, { title = "Mastery" })
+		local diff = os.time() - M.session_state.enter_ts
+		vim.notify(
+			"you've achieved " .. state.elapsed + diff .. "s of mastery",
+			vim.log.levels.INFO,
+			{ title = "Mastery" }
+		)
 	end, {})
 end
 
