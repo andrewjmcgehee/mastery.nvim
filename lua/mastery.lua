@@ -88,12 +88,16 @@ M.setup = function()
 		end
 		local diff = os.time() - M.session_state.enter_ts
 		local mastery = state.elapsed + diff
-		local hours = mastery / 60 / 60
-		local percent = (hours / 10000) * 100
+		local minutes = math.floor(mastery / 60) % 60
+		local hours = math.floor(mastery / 60 / 60)
+		local percent = (mastery / 60 / 60 / 10000) * 100
 		vim.notify(
 			"you've achieved "
-				.. string.format("%.2f", hours)
-				.. " hours ("
+				.. hours
+				.. "h "
+				.. minutes
+				.. "m "
+				.. "("
 				.. string.format("%.4f", percent)
 				.. "%) of mastery",
 			vim.log.levels.INFO,
