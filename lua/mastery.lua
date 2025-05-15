@@ -9,6 +9,12 @@ M.setup = function()
 			local elapsed = 0
 			if not file then
 				file = io.open(vim.fn.stdpath("data") .. "/mastery.state", "w")
+				if not file then
+					vim.notify("Failed to create mastery.state file")
+					return
+				end
+				file:write(offset .. "\n")
+				file:write(elapsed .. "\n")
 			else
 				offset = tonumber(file:read("*1"), 10)
 				elapsed = tonumber(file:read("*1"), 10)
