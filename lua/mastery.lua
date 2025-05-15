@@ -16,8 +16,8 @@ M.setup = function()
 				file:write(offset .. "\n")
 				file:write(elapsed .. "\n")
 			else
-				offset = tonumber(file:read("*1"), 10)
-				elapsed = tonumber(file:read("*1"), 10)
+				offset = file:read("*n")
+				elapsed = file:read("*n")
 			end
 			vim.notify(offset .. " " .. elapsed)
 			-- log the time
