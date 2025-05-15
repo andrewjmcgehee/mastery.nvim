@@ -2,13 +2,12 @@ local M = {}
 
 M.session_state = {
 	enter_ts = -1,
-	leave_ts = -1,
 }
 
 M.log_enter_ts = function()
 	-- log and set the enter time
 	local now = os.time()
-	M.state.enter_ts = now
+	M.session_state.enter_ts = now
 	local log_fp = vim.fn.stdpath("data") .. "/mastery.log"
 	local log_file = io.open(log_fp, "a")
 	if log_file then
