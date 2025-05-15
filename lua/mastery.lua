@@ -1,5 +1,12 @@
 local M = {}
 
+local state = {
+	enter_ts = -1,
+	leave_ts = -1,
+}
+
+M.state = state
+
 M.setup = function()
 	vim.api.nvim_create_autocmd("VimEnter", {
 		callback = function()
@@ -19,9 +26,13 @@ M.setup = function()
 				offset = file:read("*n")
 				elapsed = file:read("*n")
 			end
-			vim.notify(offset .. " " .. elapsed)
-			-- log the time
+			local total_elapsed = offset + elapsed
+			vim.notify("Mastery: " .. total_elapsed .. " seconds", vim.log.levels.INFO, {
+				title = "Mastery",
+			})
+			-- log and set the enter time
 			local now = os.time()
+			M.state.enter_ts = now
 			local fp = vim.fn.stdpath("data") .. "/mastery.log"
 			local log = io.open(fp, "a")
 			if log then
@@ -29,9 +40,11 @@ M.setup = function()
 			end
 		end,
 	})
-	vim.api.nvim_create_autocmd("VimLeave", {
+	vim.api.nvim_create_autocmd("BufLeave", {
 		callback = function()
 			local now = os.time()
+			local diff = now - M.state.enter_ts
+			print(diff)
 			local fp = vim.fn.stdpath("data") .. "/mastery.log"
 			local log = io.open(fp, "a")
 			if log then
