@@ -87,8 +87,26 @@ M.setup = function()
 			return
 		end
 		local diff = os.time() - M.session_state.enter_ts
+		local seconds = diff % 60
+		local minutes = math.floor(diff / 60) % 60
+		local hours = math.floor(diff / 60 / 60) % 24
+		local days = math.floor(diff / 60 / 60 / 24) % 30
+		local months = math.floor(diff / 60 / 60 / 24 / 30) % 12
+		local years = math.floor(diff / 60 / 60 / 24 / 30 / 12)
 		vim.notify(
-			"you've achieved " .. state.elapsed + diff .. "s of mastery",
+			"you've achieved "
+				.. years
+				.. "y "
+				.. months
+				.. "mo "
+				.. days
+				.. "d "
+				.. hours
+				.. "h "
+				.. minutes
+				.. "m "
+				.. seconds
+				.. "s of mastery",
 			vim.log.levels.INFO,
 			{ title = "Mastery" }
 		)
