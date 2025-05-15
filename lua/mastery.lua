@@ -87,12 +87,13 @@ M.setup = function()
 			return
 		end
 		local diff = os.time() - M.session_state.enter_ts
-		local seconds = diff % 60
-		local minutes = math.floor(diff / 60) % 60
-		local hours = math.floor(diff / 60 / 60) % 24
-		local days = math.floor(diff / 60 / 60 / 24) % 30
-		local months = math.floor(diff / 60 / 60 / 24 / 30) % 12
-		local years = math.floor(diff / 60 / 60 / 24 / 30 / 12)
+		local mastery = state.elapsed + diff
+		local seconds = mastery % 60
+		local minutes = math.floor(mastery / 60) % 60
+		local hours = math.floor(mastery / 60 / 60) % 24
+		local days = math.floor(mastery / 60 / 60 / 24) % 30
+		local months = math.floor(mastery / 60 / 60 / 24 / 30) % 12
+		local years = math.floor(mastery / 60 / 60 / 24 / 30 / 12)
 		vim.notify(
 			"you've achieved "
 				.. years
