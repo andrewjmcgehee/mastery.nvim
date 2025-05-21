@@ -4,25 +4,18 @@ M.session_state = {
 	enter_ts = -1,
 }
 
-M.log_enter_ts = function()
-	-- log and set the enter time
+M.set_enter_ts = function()
 	local now = os.time()
 	M.session_state.enter_ts = now
-	local log_fp = vim.fn.stdpath("data") .. "/mastery.log"
-	local log_file = io.open(log_fp, "a")
-	if log_file then
-		log_file:write(now, ",")
-		log_file:close()
-	end
 	return now
 end
 
-M.log_exit_ts = function()
+M.log_time_delta = function()
 	local now = os.time()
 	local log_fp = vim.fn.stdpath("data") .. "/mastery.log"
 	local log_file = io.open(log_fp, "a")
 	if log_file then
-		log_file:write(now, "\n")
+		log_file:write(M.session_state.enter_ts, ",", now, "\n")
 		log_file:close()
 	end
 	return now
@@ -65,11 +58,11 @@ M.update_global_state_file = function(elapsed)
 end
 
 M.on_enter = function()
-	M.log_enter_ts()
+	M.set_enter_ts()
 end
 
 M.on_leave = function()
-	local now = M.log_exit_ts()
+	local now = M.log_time_delta()
 	local diff = now - M.session_state.enter_ts
 	local state = M.create_or_read_global_state_file()
 	if not state then
