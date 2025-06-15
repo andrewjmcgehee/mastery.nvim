@@ -107,6 +107,8 @@ M.setup = function()
 		local diff = os.time() - M.session_state.enter_ts
 		local total = os.time() - init.initial_timestamp
 		local total_days = math.floor(total / 60 / 60 / 24)
+		local total_days_mod = total_days % 365
+		local total_years = math.floor(total_days / 365)
 		local mastery = state.elapsed + diff
 		local minutes = math.floor(mastery / 60) % 60
 		local hours = math.floor(mastery / 60 / 60)
@@ -119,9 +121,13 @@ M.setup = function()
 				.. "m "
 				.. "("
 				.. string.format("%.4f", percent)
-				.. "%) of mastery. you practice "
+				.. "%) of mastery in the past "
+				.. total_years
+				.. "y "
+				.. total_days_mod
+				.. "d.\nthat's "
 				.. string.format("%.2f", hours / total_days)
-				.. "h per day on average.",
+				.. "h per day.",
 			vim.log.levels.INFO,
 			{ title = "Mastery" }
 		)
