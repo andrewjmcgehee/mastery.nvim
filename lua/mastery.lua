@@ -21,6 +21,26 @@ M.log_time_delta = function()
 	return now
 end
 
+M.create_or_read_global_init_file = function()
+	local init = os.time()
+	local init_fp = vim.fn.stdpath("data") .. "/mastery.init"
+	local init_file = io.open(init_fp, "r")
+	if not init_file then
+		init_file = io.open(init_fp, "w")
+		if not init_file then
+			vim.notify("failed to create mastery.init file", vim.log.levels.ERROR, { title = "Mastery" })
+			return
+		end
+		init_file:write(init .. "\n")
+	else
+		init = init_file:read("*n")
+	end
+	init_file:close()
+	return {
+		initial_timestamp = init,
+	}
+end
+
 M.create_or_read_global_state_file = function()
 	-- read or create the state file
 	local elapsed = 0
@@ -58,6 +78,7 @@ M.update_global_state_file = function(elapsed)
 end
 
 M.on_enter = function()
+	M.create_or_read_global_init_file()
 	M.set_enter_ts()
 end
 
@@ -75,11 +96,17 @@ M.setup = function()
 	vim.api.nvim_create_autocmd("VimEnter", { callback = M.on_enter })
 	vim.api.nvim_create_autocmd("VimLeave", { callback = M.on_leave })
 	vim.api.nvim_create_user_command("Mastery", function()
+		local init = M.create_or_read_global_init_file()
+		if not init then
+			return
+		end
 		local state = M.create_or_read_global_state_file()
 		if not state then
 			return
 		end
 		local diff = os.time() - M.session_state.enter_ts
+		local total = os.time() - init.initial_timestamp
+		local total_days = math.floor(total / 60 / 60 / 24)
 		local mastery = state.elapsed + diff
 		local minutes = math.floor(mastery / 60) % 60
 		local hours = math.floor(mastery / 60 / 60)
@@ -92,7 +119,9 @@ M.setup = function()
 				.. "m "
 				.. "("
 				.. string.format("%.4f", percent)
-				.. "%) of mastery",
+				.. "%) of mastery. you practice "
+				.. string.format("%.2f", hours / total_days)
+				.. "h per day on average.",
 			vim.log.levels.INFO,
 			{ title = "Mastery" }
 		)
